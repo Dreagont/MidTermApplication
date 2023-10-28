@@ -51,5 +51,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     //Circle Image
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation ("com.github.dhaval2404:imagepicker:2.1")
 
 }

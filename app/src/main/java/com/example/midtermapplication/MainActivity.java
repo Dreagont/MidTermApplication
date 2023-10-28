@@ -1,43 +1,59 @@
 package com.example.midtermapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.midtermapplication.databinding.ActivityMainBinding;
+import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-    FirebaseAuth mAuth;
-    Button btnLogout;
-    TextView txtUser;
+    ActivityMainBinding mainBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mAuth = FirebaseAuth.getInstance();
-        btnLogout = findViewById(R.id.btnLogout);
-        txtUser = findViewById(R.id.txtUser);
-
-        txtUser.setText(mAuth.getCurrentUser().getEmail());
+        mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(mainBinding.getRoot());
+        changeFragment(new ProfileFragment());
 
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
+        mainBinding.bottomBar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                signOut();
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.profileTab) {
+                    changeFragment(new ProfileFragment());
+                }
+                if (item.getItemId() == R.id.certificatesTab) {
+                    changeFragment(new CertificatesFragment());
+                }
+                return true;
             }
         });
     }
-    private void signOut() {
-        mAuth.signOut();
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+
+    public void changeFragment (Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.mainFrame,fragment);
+        fragmentTransaction.commit();
     }
+
 }

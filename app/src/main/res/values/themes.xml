@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.MidTermApplication" parent="Base.Theme.MidTermApplication" />
+
 </resources>
