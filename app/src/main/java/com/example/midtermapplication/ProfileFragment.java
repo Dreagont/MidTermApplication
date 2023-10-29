@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +37,8 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private Button btnLogout;
     private TextView txtUser;
-
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -80,6 +84,8 @@ public class ProfileFragment extends Fragment {
         txtUser =view.findViewById(R.id.txtProUserAva);
         proPic = view.findViewById(R.id.proPic);
         btnSetting = view.findViewById(R.id.proSetting);
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference("profile_pictures");
 
         txtUser.setText(mAuth.getCurrentUser().getEmail());
         btnSetting.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +133,17 @@ public class ProfileFragment extends Fragment {
         if (resultCode == MainActivity.RESULT_OK) {
             Uri uri = data.getData();
             proPic.setImageURI(uri);
+            String imageName = mAuth.getCurrentUser().getEmail() + ".jpg";
+
+            StorageReference imageRef = storageReference.child(imageName);
+
+            UploadTask uploadTask = imageRef.putFile(uri);
+
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                Toast.makeText(getActivity(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(e -> {
+                Toast.makeText(getActivity(), "Failed to upload profile picture: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(getActivity(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
         } else {

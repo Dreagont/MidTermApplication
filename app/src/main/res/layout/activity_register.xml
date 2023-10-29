@@ -9,19 +9,71 @@
     android:gravity="center"
     android:padding="16dp"
     tools:context=".RegisterActivity">
+    <LinearLayout
+        android:layout_marginTop="8dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="20dp"
+            android:text="Role"/>
+
+        <RadioGroup
+            android:id="@+id/gRole"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/roleManager"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:textSize="20dp"
+                android:text="Manager"/>
+
+            <RadioButton
+                android:id="@+id/roleStudent"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Student"/>
+        </RadioGroup>
+
+    </LinearLayout>
     <EditText
         android:id="@+id/txtFullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Full Name"
         android:layout_marginTop="16dp" />
-
+    <EditText
+        android:id="@+id/txtPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="number"
+        android:layout_marginTop="16dp" />
+    <EditText
+        android:id="@+id/txtAge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Age"
+        android:inputType="number"
+        android:layout_marginTop="16dp" />
     <EditText
         android:id="@+id/txtEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
+        android:inputType="textEmailAddress"
         android:layout_marginTop="16dp" />
 
     <EditText
@@ -29,12 +81,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
+        android:inputType="textPassword"
         android:layout_marginTop="16dp" />
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Block"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/checkboxStatus"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="20dp" />
 </LinearLayout>
