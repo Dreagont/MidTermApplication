@@ -41,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         checkBoxStatus = findViewById(R.id.checkboxStatus);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Accounts"); // Change "Account" to "Accounts" or your desired path
+        databaseReference = firebaseDatabase.getReference("Accounts");
 
         btnRegister = findViewById(R.id.btnRegister);
 
@@ -73,7 +73,8 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             User user = new User(fullName, phone, email, password, Integer.parseInt(age), role, checkBoxStatus.isChecked());
 
-                            String uniqueKey = email.replace(".", ",");
+                            String uniqueKey = (email.split("@"))[0];
+
 
                             writeNewUser(uniqueKey, user);
 

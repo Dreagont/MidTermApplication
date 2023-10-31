@@ -8,6 +8,7 @@ public class User {
     private int Age;
     private String Role;
     private boolean Lock = false;
+    private String ImageUrl = "default.jpg";
 
     public User(String name, String phone, String mail, String password, int age, String role) {
         Name = name;
@@ -37,6 +38,14 @@ public class User {
     }
 
     public User() {
+    }
+
+    public String getImageUrl() {
+        return ImageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        ImageUrl = imageUrl;
     }
 
     public String getPassword() {
@@ -89,7 +98,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "User{" +
                 "Name='" + Name + '\'' +
                 ", Phone='" + Phone + '\'' +
                 ", Mail='" + Mail + '\'' +
@@ -97,6 +106,7 @@ public class User {
                 ", Age=" + Age +
                 ", Role='" + Role + '\'' +
                 ", Lock=" + Lock +
+                ", ImageUrl='" + ImageUrl + '\'' +
                 '}';
     }
 }

@@ -22,16 +22,25 @@ import android.widget.Toast;
 import com.example.midtermapplication.databinding.ActivityMainBinding;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding mainBinding;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
+
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
+
+        mAuth = FirebaseAuth.getInstance();
+
+
         changeFragment(new ProfileFragment());
 
 

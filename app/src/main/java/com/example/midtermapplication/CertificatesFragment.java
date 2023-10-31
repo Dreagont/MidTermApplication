@@ -2,14 +2,29 @@ package com.example.midtermapplication;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +48,10 @@ public class CertificatesFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Certificates> certificates;
     private CertificatesAdapter certificatesAdapter;
+    Button cer;
+
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     public CertificatesFragment() {
         // Required empty public constructor
@@ -67,25 +86,64 @@ public class CertificatesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_certificates, container, false);
 
-        certificates = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            certificates.add(new Certificates("Cer" + i,"Cer body bro" + i));
+        FirebaseApp.initializeApp(requireContext());
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Accounts");
+        if (currentUser != null) {
+            String userEmail = currentUser.getEmail();
+
+            certificates = new ArrayList<>();
+
+            String uniqueKey =(userEmail.split("@"))[0];
+
+            retrieveDataAndDisplay(uniqueKey);
+
+
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
+
+            recyclerView = view.findViewById(R.id.recycleCer);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), RecyclerView.VERTICAL));
+
+            certificatesAdapter = new CertificatesAdapter(requireContext(), certificates);
+            recyclerView.setAdapter(certificatesAdapter);
+        } else {
+
         }
 
-        RecyclerView.LayoutManager layoutManager =new LinearLayoutManager(this.getContext(),RecyclerView.VERTICAL,false);
-
-        recyclerView = view.findViewById(R.id.recycleCer);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this.getContext(),RecyclerView.VERTICAL));
-
-        certificatesAdapter = new CertificatesAdapter(this.getContext(), certificates);
-        recyclerView.setAdapter(certificatesAdapter);
         return view;
     }
+
+    private void retrieveDataAndDisplay(String uniqueKey) {
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Toast.makeText(getActivity(), "sss", Toast.LENGTH_SHORT).show();
+                    for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                        String mail = String.valueOf(childSnapshot.child("mail").getValue());
+                        certificates.add(new Certificates(uniqueKey, mail));
+                    }
+                    certificatesAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 }

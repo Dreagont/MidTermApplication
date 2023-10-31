@@ -1,9 +1,11 @@
 package com.example.midtermapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,11 +18,26 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +55,11 @@ public class ProfileFragment extends Fragment {
     private Button btnLogout;
     private TextView txtUser;
     private FirebaseStorage firebaseStorage;
-    private StorageReference storageReference;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    private StorageReference saveStorageReference, loadStorageReference;
+
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -84,10 +105,17 @@ public class ProfileFragment extends Fragment {
         txtUser =view.findViewById(R.id.txtProUserAva);
         proPic = view.findViewById(R.id.proPic);
         btnSetting = view.findViewById(R.id.proSetting);
-        firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference("profile_pictures");
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Accounts");
 
         txtUser.setText(mAuth.getCurrentUser().getEmail());
+        loadPicture();
+
+
+        firebaseStorage = FirebaseStorage.getInstance();
+        saveStorageReference = firebaseStorage.getReference("profile_pictures");
+
+
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +125,72 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-        private void showPopupMenu(View view) {
+    private void loadPicture() {
+        databaseReference.child((mAuth.getCurrentUser().getEmail().split("@"))[0]).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String imageUrl = String.valueOf(snapshot.child("imageUrl").getValue());
+
+                    Bitmap cachedImage = loadProfileImageFromCache(imageUrl);
+
+                    if (cachedImage != null) {
+                        proPic.setImageBitmap(cachedImage);
+                    } else {
+                        firebaseStorage = FirebaseStorage.getInstance();
+
+                        loadStorageReference = firebaseStorage.getReference("profile_pictures/" + imageUrl);
+                        loadStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String imagePath = uri.toString();
+
+                                Glide.with(getContext()).load(imagePath).into(proPic);
+
+
+                                saveProfileImageToCache(imagePath);
+                            }
+                        });
+                    }
+                } else {
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void saveProfileImageToCache(String imagePath) {
+
+        Glide.with(getContext())
+                .asBitmap()
+                .load(imagePath)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Lưu vào cache
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+
+                    }
+                });
+    }
+
+    private Bitmap loadProfileImageFromCache(String imageUrl) {
+        try {
+            return Glide.with(getContext())
+                    .asBitmap()
+                    .load(imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .submit()
+                    .get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         MenuInflater inflater = popupMenu.getMenuInflater();
         inflater.inflate(R.menu.profile_setting_popup, popupMenu.getMenu());
@@ -133,9 +226,9 @@ public class ProfileFragment extends Fragment {
         if (resultCode == MainActivity.RESULT_OK) {
             Uri uri = data.getData();
             proPic.setImageURI(uri);
-            String imageName = mAuth.getCurrentUser().getEmail() + ".jpg";
+            String imageName = (mAuth.getCurrentUser().getEmail().split("@"))[0] + ".jpg";
 
-            StorageReference imageRef = storageReference.child(imageName);
+            StorageReference imageRef = saveStorageReference.child(imageName);
 
             UploadTask uploadTask = imageRef.putFile(uri);
 
