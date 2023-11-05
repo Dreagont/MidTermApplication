@@ -36,29 +36,30 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/proPic"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_marginTop="72dp"
-                        android:src="@drawable/bro"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="48dp"
+                        android:src="@drawable/baseline_downloading_24"
+
+                        app:civ_border_color="@color/white"
+                        app:civ_border_width="3dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.498"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:civ_border_width="3dp"
-                        app:civ_border_color="@color/white"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/txtProUserAva"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="UserName"
+                        android:text="Loading...."
                         android:textColor="@color/white"
-                        android:textSize="17dp"
+                        android:textSize="35dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.714" />
+                        app:layout_constraintVertical_bias="0.81" />
 
                     <ImageView
                         android:id="@+id/proSetting"
@@ -79,31 +80,64 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="35dp"
                 android:layout_width="350dp"
                 android:layout_height="270dp"
-                android:background="@drawable/infor_table"
+                android:background="@drawable/form_box"
                 android:orientation="vertical" >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="0.5">
-                </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18dp"
-                        android:layout_gravity="center"
-                        android:text="User name:"
+                        android:layout_marginTop="10dp"
+                        android:textStyle="bold"
+                        android:text="Role:"
+                        android:textSize="20dp"
+                        />
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                    <TextView
+                        android:id="@+id/txtProfileRole"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="18dp"
+                        android:layout_marginRight="18dp"
+                        android:text="Loading...."
                         android:textSize="17dp"
+                        android:layout_marginBottom="10dp"
+                        />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginRight="18dp"
+                    android:background="@color/black">
+
+                </View>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="18dp"
+                        android:layout_marginTop="10dp"
+                        android:textStyle="bold"
+                        android:text="Email:"
+                        android:textSize="20dp"
                         />
                     <View
                         android:layout_width="0dp"
@@ -115,9 +149,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18dp"
                         android:layout_marginRight="18dp"
-                        android:layout_gravity="center"
-                        android:text="User1"
+                        android:text="Loading...."
                         android:textSize="17dp"
+                        android:layout_marginBottom="15dp"
                         />
                 </LinearLayout>
                 <View
@@ -132,15 +166,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18dp"
-                        android:layout_gravity="center"
-                        android:text="User Age:"
-                        android:textSize="17dp"
+                        android:layout_marginTop="10dp"
+                        android:textStyle="bold"
+                        android:text="Age:"
+                        android:textSize="20dp"
                         />
                     <View
                         android:layout_width="0dp"
@@ -151,10 +186,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18dp"
-                        android:layout_gravity="center"
-                        android:text="User1"
                         android:layout_marginRight="18dp"
+                        android:text="Loading...."
                         android:textSize="17dp"
+                        android:layout_marginBottom="10dp"
                         />
                 </LinearLayout>
                 <View
@@ -169,15 +204,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18dp"
-                        android:layout_gravity="center"
-                        android:text="Phone Number:"
-                        android:textSize="17dp"
+                        android:layout_marginTop="10dp"
+                        android:textStyle="bold"
+                        android:text="Phone:"
+                        android:textSize="20dp"
                         />
                     <View
                         android:layout_width="0dp"
@@ -188,19 +224,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="18dp"
-                        android:layout_gravity="center"
-                        android:text="User1"
-                        android:textSize="17dp"
                         android:layout_marginRight="18dp"
+                        android:text="Loading...."
+                        android:textSize="17dp"
+                        android:layout_marginBottom="10dp"
                         />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="18dp"
+                        android:layout_marginRight="18dp"
+                        android:background="@color/black">
+
+                    </View>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="0.5">
-                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>

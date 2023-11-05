@@ -1,15 +1,9 @@
 package com.example.midtermapplication;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,10 +12,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,14 +23,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,7 +45,7 @@ public class ProfileFragment extends Fragment {
     private ImageView btnSetting, proPic;
     private FirebaseAuth mAuth;
     private Button btnLogout;
-    private TextView txtUser;
+    private TextView txtUser, txtProfileUsername, txtProfileAge, txtProfilePhone, txtProfileRole;
     private FirebaseStorage firebaseStorage;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -105,12 +97,16 @@ public class ProfileFragment extends Fragment {
         txtUser =view.findViewById(R.id.txtProUserAva);
         proPic = view.findViewById(R.id.proPic);
         btnSetting = view.findViewById(R.id.proSetting);
+        txtProfileUsername = view.findViewById(R.id.txtProfileUsername);
+        txtProfileAge = view.findViewById(R.id.txtProfileAge);
+        txtProfilePhone = view.findViewById(R.id.txtProfilePhone);
+        txtProfileRole = view.findViewById(R.id.txtProfileRole);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Accounts");
 
         txtUser.setText(mAuth.getCurrentUser().getEmail());
-        loadPicture();
-
+        loadData();
 
         firebaseStorage = FirebaseStorage.getInstance();
         saveStorageReference = firebaseStorage.getReference("profile_pictures");
@@ -125,33 +121,38 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    private void loadPicture() {
+    private void loadData() {
         databaseReference.child((mAuth.getCurrentUser().getEmail().split("@"))[0]).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     String imageUrl = String.valueOf(snapshot.child("imageUrl").getValue());
-
-                    Bitmap cachedImage = loadProfileImageFromCache(imageUrl);
-
-                    if (cachedImage != null) {
-                        proPic.setImageBitmap(cachedImage);
-                    } else {
-                        firebaseStorage = FirebaseStorage.getInstance();
-
-                        loadStorageReference = firebaseStorage.getReference("profile_pictures/" + imageUrl);
-                        loadStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                String imagePath = uri.toString();
-
-                                Glide.with(getContext()).load(imagePath).into(proPic);
+                    String mail = String.valueOf(snapshot.child("mail").getValue());
+                    String phone = String.valueOf(snapshot.child("phone").getValue());
+                    String age = String.valueOf(snapshot.child("age").getValue());
+                    String name = String.valueOf(snapshot.child("name").getValue());
+                    String role = String.valueOf(snapshot.child("role").getValue());
 
 
-                                saveProfileImageToCache(imagePath);
-                            }
-                        });
-                    }
+                    txtProfileUsername.setText(mail);
+                    txtProfileAge.setText(age);
+                    txtProfilePhone.setText(phone);
+                    txtUser.setText(name);
+                    txtProfileRole.setText(role);
+
+                    firebaseStorage = FirebaseStorage.getInstance();
+
+                    loadStorageReference = firebaseStorage.getReference("profile_pictures/" + imageUrl);
+                    loadStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String imagePath = uri.toString();
+
+                            Picasso.get().load(imagePath).placeholder(R.drawable.baseline_downloading_24).into(proPic);
+
+                        }
+                    });
+
                 } else {
                 }
             }
@@ -161,42 +162,28 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-    private void saveProfileImageToCache(String imagePath) {
-
-        Glide.with(getContext())
-                .asBitmap()
-                .load(imagePath)
-                .diskCacheStrategy(DiskCacheStrategy.ALL) // Lưu vào cache
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-
-                    }
-                });
-    }
-
-    private Bitmap loadProfileImageFromCache(String imageUrl) {
-        try {
-            return Glide.with(getContext())
-                    .asBitmap()
-                    .load(imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .submit()
-                    .get();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 
     private void showPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        MenuInflater inflater = popupMenu.getMenuInflater();
-        inflater.inflate(R.menu.profile_setting_popup, popupMenu.getMenu());
 
+        PopupMenu popup = new PopupMenu(getActivity(), view);
+        try {
+            Field[] fields = popup.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if ("mPopup".equals(field.getName())) {
+                    field.setAccessible(true);
+                    Object menuPopupHelper = field.get(popup);
+                    Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                    Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon",boolean.class);
+                    setForceIcons.invoke(menuPopupHelper, true);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        popup.getMenuInflater().inflate(R.menu.profile_setting_popup, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(android.view.MenuItem item) {
                 int itemId = item.getItemId();
@@ -217,7 +204,7 @@ public class ProfileFragment extends Fragment {
                 return false;
             }
         });
-        popupMenu.show();
+        popup.show();
     }
 
     @Override

@@ -13,5 +13,11 @@
 
     </item>
 
+    <item
+        android:title="Users"
+        android:id="@+id/UsersTab"
+        android:icon="@drawable/users">
+    </item>
+
 
 </menu>

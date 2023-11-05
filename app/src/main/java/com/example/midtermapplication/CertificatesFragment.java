@@ -1,6 +1,12 @@
 package com.example.midtermapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -8,15 +14,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,7 +45,7 @@ public class CertificatesFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Certificates> certificates;
     private CertificatesAdapter certificatesAdapter;
-    Button cer;
+    ImageView btnAdd;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -95,6 +92,16 @@ public class CertificatesFragment extends Fragment {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        btnAdd = view.findViewById(R.id.btnAdd);
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AddCertificatesActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Accounts");
@@ -130,7 +137,6 @@ public class CertificatesFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Toast.makeText(getActivity(), "sss", Toast.LENGTH_SHORT).show();
                     for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                         String mail = String.valueOf(childSnapshot.child("mail").getValue());
                         certificates.add(new Certificates(uniqueKey, mail));
