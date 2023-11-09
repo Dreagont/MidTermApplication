@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     private ProfileFragment profileFragment = new ProfileFragment();
     private CertificatesFragment certificatesFragment = new CertificatesFragment();
+
+    private UsersFragment usersFragment = new UsersFragment();
     private Fragment activeFragment = profileFragment;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     FirebaseDatabase firebaseDatabase;
@@ -41,12 +43,16 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        fragmentManager.beginTransaction().add(R.id.mainFrame, profileFragment).add(R.id.mainFrame, certificatesFragment).hide(certificatesFragment).commit();
+        fragmentManager.beginTransaction().add(R.id.mainFrame, profileFragment).add(R.id.mainFrame, certificatesFragment).hide(certificatesFragment).add(R.id.mainFrame, usersFragment).hide(usersFragment).commit();
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Accounts");
+        
+        User receivedUser = (User) getIntent().getSerializableExtra("user");
+
 
         loadRole();
+
 
 
         mainBinding.bottomBar.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -60,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getItemId() == R.id.certificatesTab) {
                     fragmentManager.beginTransaction().hide(activeFragment).show(certificatesFragment).commit();
                     activeFragment = certificatesFragment;
+                    return true;
+                }
+                if (item.getItemId() == R.id.UsersTab) {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(usersFragment).commit();
+                    activeFragment = usersFragment;
                     return true;
                 }
                 return true;

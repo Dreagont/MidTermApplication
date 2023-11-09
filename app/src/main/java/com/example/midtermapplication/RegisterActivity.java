@@ -1,8 +1,5 @@
 package com.example.midtermapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,17 +7,20 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
     EditText txtFullName, txtEmail, txtPassword, txtPhone, txtAge, txtRole;
-    Button btnRegister;
+    Button btnRegister, btnBackUser;
     CheckBox checkBoxStatus;
     RadioGroup gRole;
     FirebaseDatabase firebaseDatabase;
@@ -44,6 +44,14 @@ public class RegisterActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("Accounts");
 
         btnRegister = findViewById(R.id.btnRegister);
+        btnBackUser = findViewById(R.id.btnBackUser);
+
+        btnBackUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,9 +67,19 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
                 } else {
                     SignUp(fullName, email, password, phone, age, role);
+                    clearText();
                 }
             }
         });
+    }
+
+    private void clearText() {
+        ((EditText) findViewById(R.id.txtFullName)).setText("");
+        ((EditText) findViewById(R.id.txtPhone)).setText("");
+        ((EditText) findViewById(R.id.txtEmail)).setText("");
+        ((EditText) findViewById(R.id.txtAge)).setText("");
+        ((EditText) findViewById(R.id.txtPassword)).setText("");
+        ((RadioGroup) findViewById(R.id.gRole)).clearCheck();
     }
 
     private void SignUp(String fullName, String email, String password, String phone, String age, String role) {
@@ -77,9 +95,6 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                             writeNewUser(uniqueKey, user);
-
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
 
                             Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
 

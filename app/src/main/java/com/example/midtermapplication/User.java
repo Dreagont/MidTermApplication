@@ -1,6 +1,8 @@
 package com.example.midtermapplication;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String Name;
     private String Phone;
     private String Mail;
@@ -15,6 +17,22 @@ public class User {
         Phone = phone;
         Mail = mail;
         Password = password;
+        Age = age;
+        Role = role;
+    }
+
+    public User(String name, String mail, String role, boolean lock) {
+        Name = name;
+        Mail = mail;
+        Role = role;
+        Lock = lock;
+    }
+
+    public User(String name, String phone, String mail, int age, String role, boolean lock) {
+        Name = name;
+        Phone = phone;
+        Mail = mail;
+        Lock = lock;
         Age = age;
         Role = role;
     }
