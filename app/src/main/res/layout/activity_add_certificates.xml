@@ -6,9 +6,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:padding="17dp"
     android:background="@color/white"
     tools:context=".AddCertificatesActivity">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/forward_box"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/btnBackCer"
+        >
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/back_arrow"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back to user list"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            />
+    </LinearLayout>
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -25,121 +49,88 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-
-    <TextView
-        android:id="@+id/forStudent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Add certificate for student"
-        android:textAppearance="@android:style/TextAppearance.Material.Headline"
-        android:textColor="#2196F3"
-        android:textSize="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@drawable/form_box"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.287"
         tools:layout_editor_absoluteX="32dp">
 
-        <EditText
-            android:id="@+id/txtAddCerId"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="20dp"
-            android:hint="Certificate Id"
-            android:textColor="@color/black"
-            android:textColorHint="#DD7196" />
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginLeft="10dp"
+                android:text="Certificate name"/>
 
-        <EditText
-            android:id="@+id/txtAddCerName"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/input_box"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/txtAddCerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/blank"
+                    android:layout_marginLeft="10dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="20dp"
-            android:hint="CertificateName"
-            android:textColorHint="#DD7196" />
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginLeft="10dp"
+                android:text="Certificate description"/>
 
-        <EditText
-            android:id="@+id/txtAddCerBody"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="20dp"
-            android:hint="Certificate Description"
-            android:textColorHint="#DD7196" />
-
-        <Button
-            android:id="@+id/btnAddCer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/button_background"
-            android:text="Add"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/input_box"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/txtAddCerBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:background="@drawable/blank"
+                    android:layout_marginLeft="10dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-    <LinearLayout
+    <Button
+        android:id="@+id/btnAddCer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/forStudent"
-        android:layout_margin="10dp"
-        android:background="@drawable/form_box"
-        android:orientation="vertical"
-        >
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:id="@+id/selectCer"/>
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-
-            android:id="@+id/selectStudent"/>
-        <Button
-            android:id="@+id/btnAddCerForStu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/button_background"
-            android:text="Add"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnBackCer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:background="@drawable/backbutton_background"
-        android:text="Back"
+        android:layout_gravity="end"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_background"
+        android:text="Add"
         android:textColor="@color/white"
-        android:textSize="18dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="18dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

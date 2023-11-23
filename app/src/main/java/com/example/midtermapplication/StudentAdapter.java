@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHolder> implements Filterable {
-    private List<User> users;
+public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.CertificatesHolder> implements Filterable {
+    private List<Student> users;
     private Context context;
-    private List<User> originalUsers;
+    private List<Student> originalUsers;
 
     private AdapterView.OnItemClickListener adapterViewListener;
 
@@ -34,10 +33,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHo
                 if (filterPattern.isEmpty()) {
                     users = originalUsers;
                 } else {
-                    List<User> filteredList = new ArrayList<>();
+                    List<Student> filteredList = new ArrayList<>();
 
-                    for (User user : originalUsers) {
-                        if (user.getName().toLowerCase().contains(filterPattern)) {
+                    for (Student user : originalUsers) {
+                        if (user.getStudentName().toLowerCase().contains(filterPattern)) {
                             filteredList.add(user);
                         }
                     }
@@ -51,19 +50,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHo
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                users = (List<User>) filterResults.values;
+                users = (List<Student>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
-    public UserAdapter(Context context, List<User> users) {
+    public StudentAdapter(Context context, List<Student> users) {
         this.users = users;
         this.context = context;
         this.originalUsers = users;
     }
 
     public interface OnItemClickListener {
-        void onItemClick(User user);
+        void onItemClick(Student user);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -84,25 +83,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHo
     @NonNull
     @Override
     public CertificatesHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(this.context).inflate(R.layout.user_layout, parent, false);
+        View view = LayoutInflater.from(this.context).inflate(R.layout.student_layout, parent, false);
         return new CertificatesHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CertificatesHolder holder, int position) {
-        User user = users.get(position);
-        holder.txtUserName.setText(user.getName());
-        holder.txtUserMail.setText(user.getMail());
-        holder.txtUserRole.setText(user.getRole());
+        Student user = users.get(position);
+        holder.txtStudentName.setText(user.getStudentName());
+        holder.txtStudentId.setText(user.getStudentId());
+        holder.txtStudentMail.setText(user.getStudentEmail());
 
-        String userRole = holder.txtUserRole.getText().toString();
-        if (userRole.equalsIgnoreCase("admin")) {
-            holder.userIcon.setImageResource(R.drawable.admin_icon);
-        } else if (userRole.equalsIgnoreCase("manager")) {
-            holder.userIcon.setImageResource(R.drawable.manager_icon);
-        } else if (userRole.equalsIgnoreCase("employee")) {
-            holder.userIcon.setImageResource(R.drawable.employee_icon);
-        }
 
     }
 
@@ -112,16 +103,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHo
     }
 
     class CertificatesHolder extends RecyclerView.ViewHolder {
-        TextView txtUserName, txtUserMail, txtUserRole;
-        ImageView userIcon;
+        TextView txtStudentName, txtStudentMail, txtStudentId;
 
         public CertificatesHolder(@NonNull View itemView) {
             super(itemView);
 
-            userIcon = itemView.findViewById(R.id.userIcon);
-            txtUserName = itemView.findViewById(R.id.tvUserName);
-            txtUserMail = itemView.findViewById(R.id.tvMail);
-            txtUserRole = itemView.findViewById(R.id.tvRole);
+            txtStudentId = itemView.findViewById(R.id.tvStudentId);
+            txtStudentName = itemView.findViewById(R.id.tvStudentName);
+            txtStudentMail = itemView.findViewById(R.id.tvStudentMail);
 
             // Implement AdapterView item click here
             itemView.setOnClickListener(new View.OnClickListener() {

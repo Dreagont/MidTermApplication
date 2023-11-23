@@ -7,37 +7,53 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
+    android:background="@color/white"
     tools:context=".MainActivity">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="200dp"
+        android:layout_gravity="center"
+        android:layout_height="200dp"
+        android:src="@drawable/logo"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_height="wrap_content"
+        android:text="Student management"
+        android:layout_gravity="center"
+        android:textSize="37dp"
+        android:textColor="@color/on"
+        android:textStyle="bold"
+        />
 
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:hint="Username"
-        android:layout_marginTop="100dp" />
+        android:textAlignment="center"
+        android:background="@drawable/input_box"
+        android:layout_marginTop="20dp" />
 
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:hint="Password"
+        android:textAlignment="center"
+        android:background="@drawable/input_box"
         android:inputType="textPassword"
         android:layout_marginTop="16dp" />
 
-    <TextView
-        android:id="@+id/txtCreate"
-        android:clickable="true"
-        android:textColor="#2196F3"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create new account"
-        />
+
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
+        android:background="@drawable/button_background"
         android:layout_marginTop="32dp" />
+
 </LinearLayout>

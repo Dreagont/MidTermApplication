@@ -1,8 +1,9 @@
 package com.example.midtermapplication;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class User implements Serializable {
+public class User implements Parcelable {
     private String Name;
     private String Phone;
     private String Mail;
@@ -46,6 +47,46 @@ public class User implements Serializable {
         Role = role;
         Lock = lock;
     }
+
+    protected User(Parcel in) {
+        Name = in.readString();
+        Phone = in.readString();
+        Mail = in.readString();
+        Password = in.readString();
+        Age = in.readInt();
+        Role = in.readString();
+        Lock = in.readByte() != 0;
+        ImageUrl = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Name);
+        dest.writeString(Phone);
+        dest.writeString(Mail);
+        dest.writeString(Password);
+        dest.writeInt(Age);
+        dest.writeString(Role);
+        dest.writeByte((byte) (Lock ? 1 : 0));
+        dest.writeString(ImageUrl);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getRole() {
         return Role;

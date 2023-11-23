@@ -13,7 +13,6 @@ import com.example.midtermapplication.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,15 +21,14 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding mainBinding;
-    FirebaseAuth mAuth;
     private ProfileFragment profileFragment = new ProfileFragment();
-    private CertificatesFragment certificatesFragment = new CertificatesFragment();
-
-    private UsersFragment usersFragment = new UsersFragment();
+    private StudentManageFragment studentManageFragment = new StudentManageFragment();
+    private UsersDetailFragment usersDetailFragment = new UsersDetailFragment();
     private Fragment activeFragment = profileFragment;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    public String username ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +39,25 @@ public class MainActivity extends AppCompatActivity {
         // Initialize Firebase
         FirebaseApp.initializeApp(this);
 
-        mAuth = FirebaseAuth.getInstance();
+        username = getIntent().getStringExtra("username").split("@")[0];
 
-        fragmentManager.beginTransaction().add(R.id.mainFrame, profileFragment).add(R.id.mainFrame, certificatesFragment).hide(certificatesFragment).add(R.id.mainFrame, usersFragment).hide(usersFragment).commit();
+        Bundle bundle = new Bundle();
+        bundle.putString("username", username);
 
+
+        profileFragment.setArguments(bundle);
+        studentManageFragment.setArguments(bundle);
+        usersDetailFragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction().add(R.id.mainFrame, profileFragment)
+                .add(R.id.mainFrame, studentManageFragment).hide(studentManageFragment)
+                .add(R.id.mainFrame, usersDetailFragment).hide(usersDetailFragment)
+                .commit();
+        
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Accounts");
-        
-        User receivedUser = (User) getIntent().getSerializableExtra("user");
 
-
-        loadRole();
+        loadRole(username);
 
 
 
@@ -63,14 +69,14 @@ public class MainActivity extends AppCompatActivity {
                     activeFragment = profileFragment;
                     return true;
                 }
-                if (item.getItemId() == R.id.certificatesTab) {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(certificatesFragment).commit();
-                    activeFragment = certificatesFragment;
+                if (item.getItemId() == R.id.studentManageTab) {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(studentManageFragment).commit();
+                    activeFragment = studentManageFragment;
                     return true;
                 }
                 if (item.getItemId() == R.id.UsersTab) {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(usersFragment).commit();
-                    activeFragment = usersFragment;
+                    fragmentManager.beginTransaction().hide(activeFragment).show(usersDetailFragment).commit();
+                    activeFragment = usersDetailFragment;
                     return true;
                 }
                 return true;
@@ -78,18 +84,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadRole() {
+    public void setBottomNavigationViewVisibility(int visibility) {
+        BottomNavigationView bottomNavigationView = mainBinding.bottomBar;
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setVisibility(visibility);
+        }
+    }
+
+    private void loadRole(String userName) {
         BottomNavigationView bottomNavigationView = mainBinding.bottomBar;
 
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.UsersTab); // Replace with the ID of your "Users" menu item
         menuItem.setVisible(false);
-        databaseReference.child((mAuth.getCurrentUser().getEmail().split("@"))[0]).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(userName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String role = String.valueOf(snapshot.child("role").getValue());
 
-                if (!role.equals("Student")) {
+                if (!role.equals("Employee")) {
                     menuItem.setVisible(true);
                 }
             }

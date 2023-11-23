@@ -1,6 +1,9 @@
 package com.example.midtermapplication;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,6 +45,7 @@ public class ProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private String username;
     private ImageView btnSetting, proPic;
     private FirebaseAuth mAuth;
     private Button btnLogout;
@@ -49,6 +53,8 @@ public class ProfileFragment extends Fragment {
     private FirebaseStorage firebaseStorage;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+
+
     private StorageReference saveStorageReference, loadStorageReference;
 
 
@@ -69,9 +75,10 @@ public class ProfileFragment extends Fragment {
      * @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance(String param1, String param2, String name) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
+        args.putString("username", name);
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
@@ -84,6 +91,7 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            username = getArguments().getString("username").split("@")[0];
         }
 
     }
@@ -105,8 +113,13 @@ public class ProfileFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Accounts");
 
-        txtUser.setText(mAuth.getCurrentUser().getEmail());
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String data = bundle.getString("username");
+        }
+
         loadData();
+
 
         firebaseStorage = FirebaseStorage.getInstance();
         saveStorageReference = firebaseStorage.getReference("profile_pictures");
@@ -122,7 +135,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadData() {
-        databaseReference.child((mAuth.getCurrentUser().getEmail().split("@"))[0]).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(username).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -139,6 +152,7 @@ public class ProfileFragment extends Fragment {
                     txtProfilePhone.setText(phone);
                     txtUser.setText(name);
                     txtProfileRole.setText(role);
+
 
                     firebaseStorage = FirebaseStorage.getInstance();
 
@@ -195,10 +209,12 @@ public class ProfileFragment extends Fragment {
                             .start();
                     return true;
                 } else if (itemId == R.id.logout) {
-                    mAuth.signOut();
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    clearUserSession();
+
+                    // Navigate back to the login screen
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
                     startActivity(intent);
-                    getActivity().finish();
+
                     return true;
                 }
                 return false;
@@ -207,19 +223,27 @@ public class ProfileFragment extends Fragment {
         popup.show();
     }
 
+    private void clearUserSession() {
+        SharedPreferences preferences = getContext().getSharedPreferences("user_session", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+//updateImageUrl(username);
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == MainActivity.RESULT_OK) {
             Uri uri = data.getData();
             proPic.setImageURI(uri);
-            String imageName = (mAuth.getCurrentUser().getEmail().split("@"))[0] + ".jpg";
+            String imageName = username + ".jpg";
 
             StorageReference imageRef = saveStorageReference.child(imageName);
 
             UploadTask uploadTask = imageRef.putFile(uri);
 
             uploadTask.addOnSuccessListener(taskSnapshot -> {
+                updateImageUrl(username);
                 Toast.makeText(getActivity(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(getActivity(), "Failed to upload profile picture: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -229,6 +253,10 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "Task Cancelled", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateImageUrl(String username) {
+        databaseReference.child(username).child("imageUrl").setValue(username + ".jpg");
     }
 
 }

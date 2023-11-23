@@ -2,14 +2,14 @@ package com.example.midtermapplication;
 
 
 public class Certificates {
-    private String Id;
     private String Name;
     private String Body;
+    private String StudentId;
 
-    public Certificates(String name, String body, String ID) {
+    public Certificates(String name, String body, String studentId) {
         this.Name = name;
         this.Body = body;
-        this.Id = ID;
+        this.StudentId = studentId;
     }
 
     public Certificates() {}
@@ -34,20 +34,20 @@ public class Certificates {
         Body = body;
     }
 
-    public String getId() {
-        return Id;
+    public String getStudentId() {
+        return StudentId;
     }
 
-    public void setID(String ID) {
-        this.Id = ID;
+    public void setStudentId(String studentId) {
+        StudentId = studentId;
     }
 
     @Override
     public String toString() {
         return "Certificates{" +
-                "ID=" + Id +
                 ", Name='" + Name + '\'' +
-                ", Body=" + Body +
+                ", Body='" + Body + '\'' +
+                ", StudentId='" + StudentId + '\'' +
                 '}';
     }
 }
