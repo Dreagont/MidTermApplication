@@ -55,6 +55,7 @@ public class UsersDetailFragment extends Fragment {
     TextView btnSortByName, btnSortByRole;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    String userRole = "";
 
     public UsersDetailFragment() {
         // Required empty public constructor
@@ -177,7 +178,6 @@ public class UsersDetailFragment extends Fragment {
 
 
         if (currentUser != null) {
-            String userEmail = currentUser;
             verifyRole(currentUser);
             users = new ArrayList<>();
 
@@ -200,6 +200,16 @@ public class UsersDetailFragment extends Fragment {
         } else {
 
         }
+        userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(User user) {
+                Intent intent = new Intent(getContext(),RegisterActivity.class);
+                intent.putExtra("method","edit");
+                intent.putExtra("user",user);
+                intent.putExtra("userRole",userRole);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -209,22 +219,16 @@ public class UsersDetailFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    if (String.valueOf(snapshot.child("role").getValue()).equalsIgnoreCase("admin")) {
-                        userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(User user) {
-                                Intent intent = new Intent(getContext(),RegisterActivity.class);
-                                intent.putExtra("method","edit");
-                                intent.putExtra("user",user);
-                                startActivity(intent);
-                            }
-                        });
+                    userRole = String.valueOf(snapshot.child("role").getValue());
+                    if (userRole.equalsIgnoreCase("admin")) {
+
                         btnAddUser.setVisibility(View.VISIBLE);
                         btnAddUser.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(getContext(), RegisterActivity.class);
                                 intent.putExtra("method","create");
+                                intent.putExtra("userRole",userRole);
                                 startActivity(intent);
                             }
                         });

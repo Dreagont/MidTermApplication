@@ -18,9 +18,8 @@ import java.util.List;
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.CertificatesHolder> implements Filterable {
     private List<Student> users;
     private Context context;
-    private List<Student> originalUsers;
-
     private AdapterView.OnItemClickListener adapterViewListener;
+    private List<Student> originalUsers;
 
     @Override
     public Filter getFilter() {
@@ -66,10 +65,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.Certific
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
-        // For RecyclerView item click
-        // Implement this in the CertificatesHolder class
-
-        // For AdapterView item click (e.g., ListView, GridView)
         adapterViewListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,7 +107,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.Certific
             txtStudentName = itemView.findViewById(R.id.tvStudentName);
             txtStudentMail = itemView.findViewById(R.id.tvStudentMail);
 
-            // Implement AdapterView item click here
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

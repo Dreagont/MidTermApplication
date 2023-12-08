@@ -251,7 +251,7 @@ public class ProfileFragment extends Fragment {
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(getActivity(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getActivity(), "Task Cancelled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Task Canceled", Toast.LENGTH_SHORT).show();
         }
     }
 

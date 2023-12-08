@@ -1,5 +1,7 @@
 package com.example.midtermapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,8 +39,8 @@ import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
     EditText txtFullName, txtEmail, txtPassword, txtPhone, txtAge, txtRole;
     Button btnRegister;
-    LinearLayout btnBackUser;
-    TextView btnDeleteUser,changeProPicture;
+    LinearLayout btnBackUser, editOption;
+    TextView btnDeleteUser,changeProPicture, btnHistory;
     CheckBox checkBoxStatus;
     RadioGroup gRole;
     ImageView profilePicture;
@@ -64,6 +66,47 @@ public class RegisterActivity extends AppCompatActivity {
         profilePicture = findViewById(R.id.profilePicture);
         checkBoxStatus = findViewById(R.id.checkboxStatus);
         changeProPicture = findViewById(R.id.changeProPicture);
+        editOption = findViewById(R.id.editOption);
+        btnHistory = findViewById(R.id.btnHistory);
+        btnRegister = findViewById(R.id.btnRegister);
+        btnBackUser = findViewById(R.id.btnBackUser);
+
+        String userRole = getIntent().getStringExtra("userRole");
+        if (!userRole.equalsIgnoreCase("admin")) {
+            txtFullName.setClickable(false);
+            txtFullName.setFocusable(false);
+            txtFullName.setCursorVisible(false);
+
+            txtEmail.setClickable(false);
+            txtEmail.setFocusable(false);
+            txtEmail.setCursorVisible(false);
+
+            txtPassword.setClickable(false);
+            txtPassword.setFocusable(false);
+            txtPassword.setCursorVisible(false);
+
+            txtPhone.setClickable(false);
+            txtPhone.setFocusable(false);
+            txtPhone.setCursorVisible(false);
+
+            txtAge.setClickable(false);
+            txtAge.setFocusable(false);
+            txtAge.setCursorVisible(false);
+
+            gRole.setClickable(false);
+            gRole.setEnabled(false);
+            gRole.setFocusable(false);
+
+            btnDeleteUser.setClickable(false);
+            btnDeleteUser.setEnabled(false);
+            btnDeleteUser.setAlpha(0.5f);
+
+            btnRegister.setEnabled(false);
+            btnRegister.setAlpha(0.5f);
+
+            changeProPicture.setEnabled(false);
+            changeProPicture.setClickable(false);
+        }
 
         int maxLengthFullName = 50; // Change this to your desired maximum length
         int maxLengthEmail = 100; // Change this to your desired maximum length
@@ -83,13 +126,14 @@ public class RegisterActivity extends AppCompatActivity {
         saveStorageReference = FirebaseStorage.getInstance().getReference("profile_pictures");
 
 
-        btnRegister = findViewById(R.id.btnRegister);
-        btnBackUser = findViewById(R.id.btnBackUser);
+
 
         changeProPicture.setVisibility(View.GONE);
 
         txtFullName.setFilters(new InputFilter[] {new NoLineBreaksInputFilter()});
         txtEmail.setFilters(new InputFilter[] {new NoLineBreaksInputFilter()});
+
+        editOption.setVisibility(View.GONE);
 
         String method = getIntent().getStringExtra("method");
 
@@ -97,14 +141,15 @@ public class RegisterActivity extends AppCompatActivity {
             btnRegister.setText("Update");
             editUser = getIntent().getParcelableExtra("user");
             changeProPicture.setVisibility(View.VISIBLE);
-
-            btnDeleteUser.setVisibility(View.VISIBLE);
+            editOption.setVisibility(View.VISIBLE);
 
             txtFullName.setText(editUser.getName());
             txtEmail.setText(editUser.getMail());
             txtPassword.setText(editUser.getPassword());
             txtPhone.setText(editUser.getPhone());
             txtAge.setText(String.valueOf(editUser.getAge()));
+            checkBoxStatus.setChecked(editUser.isLock());
+
 
             if (editUser.getRole().equals("Manager")) {
                 gRole.check(R.id.roleManager);
@@ -122,6 +167,15 @@ public class RegisterActivity extends AppCompatActivity {
                             .compress(1024)
                             .maxResultSize(1080, 1080)
                             .start();
+                }
+            });
+
+            btnHistory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(RegisterActivity.this, LoginHistoryActivity.class);
+                    intent.putExtra("username",txtEmail.getText().toString().split("@")[0]);
+                    startActivity(intent);
                 }
             });
         }
@@ -143,7 +197,22 @@ public class RegisterActivity extends AppCompatActivity {
                 String age = txtAge.getText().toString();
                 String role = gRole.getCheckedRadioButtonId() == R.id.roleManager ? "Manager" : "Employee";
 
-                deleteUser(fullName, email, password, phone, age, role);
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                builder.setTitle("Delete user");
+                builder.setMessage("Do you want to delete this user?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteUser(fullName, email, password, phone, age, role);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -217,7 +286,7 @@ public class RegisterActivity extends AppCompatActivity {
         updateMap.put("password", password);
         updateMap.put("age", Integer.parseInt(age));
         updateMap.put("role", role);
-        updateMap.put("isChecked", checkBoxStatus.isChecked());
+        updateMap.put("lock", checkBoxStatus.isChecked());
 
         databaseReference.child(oldEmail.split("@")[0]).addValueEventListener(new ValueEventListener() {
             @Override

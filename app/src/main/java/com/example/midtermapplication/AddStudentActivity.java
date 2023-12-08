@@ -1,5 +1,7 @@
 package com.example.midtermapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -23,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddStudentActivity extends AppCompatActivity {
-    LinearLayout btnBackStudent, btnDeleteStudent, studentCerList;
+    LinearLayout btnBackStudent, btnDeleteStudent, studentCerList, addStudentLayout;
     EditText txtStudentId, txtStudentName, txtStudentEmail;
     Button btnSaveStudent;
     FirebaseDatabase firebaseDatabase;
@@ -43,6 +45,7 @@ public class AddStudentActivity extends AppCompatActivity {
         txtStudentName = findViewById(R.id.txtStudentName);
         txtStudentEmail = findViewById(R.id.txtStudentEmail);
         btnSaveStudent = findViewById(R.id.btnSaveStudent);
+        addStudentLayout = findViewById(R.id.addStudentLayout);
 
         // Apply the NoLineBreaksInputFilter to the EditText fields
         txtStudentId.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
@@ -53,6 +56,29 @@ public class AddStudentActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("Students");
 
         String method = getIntent().getStringExtra("method");
+        String userRole = getIntent().getStringExtra("userRole");
+
+        if (userRole.equalsIgnoreCase("Employee")) {
+            txtStudentId.setClickable(false);
+            txtStudentEmail.setClickable(false);
+            txtStudentId.setFocusable(false);
+            txtStudentId.setCursorVisible(false);
+
+            txtStudentName.setClickable(false);
+            txtStudentName.setFocusable(false);
+            txtStudentName.setCursorVisible(false);
+
+            txtStudentEmail.setClickable(false);
+            txtStudentEmail.setFocusable(false);
+            txtStudentEmail.setCursorVisible(false);
+
+            btnSaveStudent.setEnabled(false);
+            btnSaveStudent.setAlpha(0.5f);
+
+            btnDeleteStudent.setAlpha(0.5f);
+            btnDeleteStudent.setEnabled(false);
+
+        }
         username = getIntent().getStringExtra("username");
         editStudent = getIntent().getParcelableExtra("student");
 
@@ -74,6 +100,7 @@ public class AddStudentActivity extends AppCompatActivity {
                 Intent intent = new Intent(AddStudentActivity.this, CertificatesListActivity.class);
                 intent.putExtra("username", username);
                 intent.putExtra("studentId", editStudent.getStudentId());
+                intent.putExtra("userRole",userRole);
                 startActivity(intent);
             }
         });
@@ -85,10 +112,24 @@ public class AddStudentActivity extends AppCompatActivity {
                 String email = txtStudentEmail.getText().toString();
                 String id = txtStudentId.getText().toString();
 
-                deleteStudent(fullName, email, id);
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddStudentActivity.this);
+                builder.setTitle("Delete student");
+                builder.setMessage("Do you want to delete this student?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteStudent(fullName, email, id);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
             }
         });
-
         btnSaveStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

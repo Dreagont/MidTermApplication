@@ -18,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AddCertificatesActivity extends AppCompatActivity {
     Button btnAddCer;
-    LinearLayout btnBack;
+    LinearLayout btnBack, btnDeleteCertificate;
     EditText txtAddCerName, txtAddCerBody;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -31,17 +31,47 @@ public class AddCertificatesActivity extends AppCompatActivity {
 
         btnBack = findViewById(R.id.btnBackCer);
         btnAddCer = findViewById(R.id.btnAddCer);
+        btnDeleteCertificate = findViewById(R.id.btnDeleteCertificate);
 
         txtAddCerName = findViewById(R.id.txtAddCerName);
         txtAddCerBody = findViewById(R.id.txtAddCerBody);
 
-        // Apply the NoLineBreaksInputFilter to the EditText fields
+        String userRole = getIntent().getStringExtra("userRole");
+        studentId = getIntent().getStringExtra("studentId");
+        String method = getIntent().getStringExtra("method");
+        Certificates certificates = getIntent().getParcelableExtra("certificate");
+        String key = getIntent().getStringExtra("key");
+
+        if (userRole.equalsIgnoreCase("Employee")) {
+
+            txtAddCerName.setClickable(false);
+            txtAddCerName.setFocusable(false);
+            txtAddCerName.setCursorVisible(false);
+
+            txtAddCerBody.setClickable(false);
+            txtAddCerBody.setFocusable(false);
+            txtAddCerBody.setCursorVisible(false);
+
+            btnAddCer.setEnabled(false);
+            btnAddCer.setAlpha(0.5f);
+
+            btnDeleteCertificate.setAlpha(0.5f);
+            btnDeleteCertificate.setEnabled(false);
+
+        }
+
         txtAddCerName.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
         txtAddCerBody.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Certificates");
-        studentId = getIntent().getStringExtra("studentId");
+        databaseReference = firebaseDatabase.getReference("Students").child(studentId).child(("Certificates"));
+
+        if (method.equalsIgnoreCase("edit")) {
+            txtAddCerBody.setText(certificates.getBody());
+            txtAddCerName.setText(certificates.getName());
+
+            btnAddCer.setText("Update");
+        }
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,10 +83,43 @@ public class AddCertificatesActivity extends AppCompatActivity {
         btnAddCer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addCertificates();
+                if (method.equalsIgnoreCase("edit")) {
+                    Certificates certificates1 = new Certificates(txtAddCerName.getText().toString(),txtAddCerBody.getText().toString(),studentId);
+                    updateCertificate(certificates1, key);
+                } else {
+                    addCertificates();
+                }
+
+            }
+        });
+
+        btnDeleteCertificate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
+
+    private void updateCertificate(Certificates certificates1, String key) {
+        DatabaseReference certificateRef = firebaseDatabase.getReference("Students").child(studentId).child("Certificates").child(key);
+
+        certificateRef.setValue(certificates1)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(AddCertificatesActivity.this, "Certificate updated successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(AddCertificatesActivity.this, "Failed to update certificate", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 
     private void addCertificates() {
         String name = txtAddCerName.getText().toString().trim();

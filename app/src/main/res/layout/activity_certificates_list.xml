@@ -58,7 +58,7 @@
                 android:orientation="vertical">
 
                 <SearchView
-                    android:id="@+id/student_search_bar"
+                    android:id="@+id/certificate_search_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/search_box"
@@ -98,18 +98,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"/>
 
-                    <TextView
-                        android:layout_width="125dp"
-                        android:layout_height="wrap_content"
-                        android:text="Sort email: Asc"
-                        android:textAllCaps="false"
-                        android:textColor="@color/black"
-                        android:gravity="center"
-                        android:background="@drawable/forward_box"
-                        android:id="@+id/btnSortByEmail"
-                        android:padding="8dp"
-                        android:clickable="true"
-                        android:focusable="true"/>
+                    \
                 </LinearLayout>
             </LinearLayout>
 
@@ -142,6 +131,26 @@
             android:clickable="true"
             android:src="@drawable/add"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+        <ImageView
+            android:id="@+id/btnAddCerCsv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:src="@drawable/import_icon"
+            app:layout_constraintBottom_toTopOf="@+id/btnAddCer"
+            app:layout_constraintRight_toRightOf="parent" />
+        <ImageView
+            android:id="@+id/btnExpCerCsv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:src="@drawable/export_icon"
+            app:layout_constraintBottom_toTopOf="@+id/btnAddCerCsv"
             app:layout_constraintRight_toRightOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

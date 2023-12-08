@@ -119,7 +119,48 @@
                     />
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/btnDeleteUser"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/forward_box"
+            android:gravity="center"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/btnDeleteCertificate"
+                android:clickable="true"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="15dp"
+                    android:src="@drawable/baseline_delete_24"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete Certificate"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#E2F10000"
+                    android:textSize="15dp"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
+
     <Button
         android:id="@+id/btnAddCer"
         android:layout_width="match_parent"

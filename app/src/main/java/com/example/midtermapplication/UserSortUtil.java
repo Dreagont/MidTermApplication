@@ -96,4 +96,40 @@ public class UserSortUtil {
             }
         });
     }
+    public static void sortCertificatesByNameAsc(List<Certificates> certificates) {
+        Collections.sort(certificates, new Comparator<Certificates>() {
+            @Override
+            public int compare(Certificates cert1, Certificates cert2) {
+                return cert1.getName().compareToIgnoreCase(cert2.getName());
+            }
+        });
+    }
+
+    public static void sortCertificatesByEmailAsc(List<Certificates> certificates) {
+        Collections.sort(certificates, new Comparator<Certificates>() {
+            @Override
+            public int compare(Certificates cert1, Certificates cert2) {
+                return cert1.getBody().compareToIgnoreCase(cert2.getBody());
+            }
+        });
+    }
+
+    public static void sortCertificatesByEmailDesc(List<Certificates> certificates) {
+        Collections.sort(certificates, new Comparator<Certificates>() {
+            @Override
+            public int compare(Certificates cert1, Certificates cert2) {
+                return cert2.getBody().compareToIgnoreCase(cert1.getBody());
+            }
+        });
+    }
+
+    public static void sortCertificatesByNameDesc(List<Certificates> certificates) {
+        Collections.sort(certificates, new Comparator<Certificates>() {
+            @Override
+            public int compare(Certificates cert1, Certificates cert2) {
+                return cert2.getName().compareToIgnoreCase(cert1.getName());
+            }
+        });
+    }
+
 }

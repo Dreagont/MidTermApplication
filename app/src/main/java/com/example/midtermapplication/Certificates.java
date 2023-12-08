@@ -1,7 +1,10 @@
 package com.example.midtermapplication;
 
 
-public class Certificates {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Certificates implements Parcelable {
     private String Name;
     private String Body;
     private String StudentId;
@@ -18,6 +21,37 @@ public class Certificates {
         this.Name = name;
         this.Body = body;
     }
+
+    protected Certificates(Parcel in) {
+        Name = in.readString();
+        Body = in.readString();
+        StudentId = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Name);
+        dest.writeString(Body);
+        dest.writeString(StudentId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Certificates> CREATOR = new Creator<Certificates>() {
+        @Override
+        public Certificates createFromParcel(Parcel in) {
+            return new Certificates(in);
+        }
+
+        @Override
+        public Certificates[] newArray(int size) {
+            return new Certificates[size];
+        }
+    };
+
     public String getName() {
         return Name;
     }

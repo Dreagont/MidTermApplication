@@ -1,127 +1,151 @@
 package com.example.midtermapplication;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.provider.OpenableColumns;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.documentfile.provider.DocumentFile;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 
 public class CsvReaderActivity extends AppCompatActivity {
 
-    private static final int READ_REQUEST_CODE = 42;
+    private TextView mTextViewCsvResult, fileName;
+    private static final int READ_REQUEST_CODE = 123;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
 
-    private TextView resultTextView;
-    private List<Certificates> certificateList;
+    List<Student> studentList = new ArrayList<>();
+    List<Certificates> certificatesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_csv_reader);
+        mTextViewCsvResult = findViewById(R.id.readAction);
+        fileName = findViewById(R.id.fileName);
 
-        resultTextView = findViewById(R.id.resultTextview);
-        certificateList = new ArrayList<>();
-
-        Button chooseFileButton = findViewById(R.id.chooseFileButton);
-
-        chooseFileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFilePicker();
-            }
+        findViewById(R.id.button_loadCsv).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("text/*");
+            startActivityForResult(intent, READ_REQUEST_CODE);
         });
-    }
 
-    private void openFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*"); // All file types
-        startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (resultData != null) {
+                Uri selectedFileUri = resultData.getData();
+                try {
+                    String method = getIntent().getStringExtra("method");
+                    if (method.equalsIgnoreCase("addStudent")) {
+                        firebaseDatabase = FirebaseDatabase.getInstance();
+                        databaseReference = firebaseDatabase.getReference("Students");
+                        int testValue = readCSV(selectedFileUri).get(0).split(",").length;
+                        Toast.makeText(this, "" + testValue, Toast.LENGTH_SHORT).show();
+                        for (String student : readCSV(selectedFileUri)) {
+                            String id = student.split(",")[0];
+                            String name = student.split(",")[1];
+                            String mail = student.split(",")[2];
 
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            // Get the URI of the selected file
-            final DocumentFile documentFile = DocumentFile.fromSingleUri(this, data.getData());
-            if (documentFile != null) {
-                String filePath = documentFile.getUri().getPath();
-                Log.e("TAG","" + filePath);
-                Toast.makeText(this, "" + filePath, Toast.LENGTH_SHORT).show();
-                // Read the CSV file and populate the certificateList
-                readCsvFile(filePath);
-                // Display the certificates in the TextView
-                displayCertificatess();
-            }
-        }
-    }
+                            studentList.add(new Student(id, name, mail));
+                        }
+                        findViewById(R.id.button_saveCsv).setOnClickListener(v -> {
+                            for (Student student : studentList) {
+                                addStudent(student);
+                            }
+                            Toast.makeText(this, "Add student successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
 
-    private void readCsvFile(String filePath) {
-        try {
-            // Use ContentResolver to open an InputStream
-            InputStream inputStream = getContentResolver().openInputStream(Uri.parse(filePath));
-            if (inputStream != null) {
-                Toast.makeText(this, "hehe", Toast.LENGTH_SHORT).show();
-                // Create a CSVReader object with the InputStream
-                CSVReader reader = new CSVReader(new InputStreamReader(inputStream));
+                    } else if (method.equalsIgnoreCase("addCertificate")) {
+                        String studentId = getIntent().getStringExtra("studentId");
+                        firebaseDatabase = FirebaseDatabase.getInstance();
+                        databaseReference = firebaseDatabase.getReference("Students").child(studentId).child("Certificates");
+                        int testValue = readCSV(selectedFileUri).get(0).split(",").length;
+                        Toast.makeText(this, "" + testValue, Toast.LENGTH_SHORT).show();
+                        for (String certificateData : readCSV(selectedFileUri)) {
+                            String certificateName = certificateData.split(",")[0];
+                            String certificateBody = certificateData.split(",")[1];
+                            Certificates certificate = new Certificates(certificateName, certificateBody, studentId);
 
-                // Read all the records into a List<String[]>
-                List<String[]> records = reader.readAll();
-
-                // Populate the certificateList
-                for (String[] record : records) {
-                    Certificates certificate = new Certificates();
-                    if (record.length >= 4) { // Ensure there are at least 4 fields in a record
-                        certificate.setName(record[1]);
-                        certificate.setBody(record[2]);
-                        certificate.setStudentId(record[3]);
-                        certificateList.add(certificate);
-                    } else {
-                        // Log a warning if a record doesn't have enough fields
-                        Toast.makeText(this, "Skipping invalid record: " + Arrays.toString(record), Toast.LENGTH_SHORT).show();
+                            certificatesList.add(certificate);
+                        }
+                        findViewById(R.id.button_saveCsv).setOnClickListener(v -> {
+                            for (Certificates certificates : certificatesList) {
+                                addCertificate(certificates);
+                            }
+                            Toast.makeText(this, "Add certificates successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
                     }
-                }
 
-                // Close the reader
-                reader.close();
-            } else {
-                Toast.makeText(this, "InputStream is null", Toast.LENGTH_SHORT).show();
+                    String selectedFileName = getFileName(selectedFileUri);
+                    fileName.setText(selectedFileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        } catch (IOException | CsvException e) {
-            e.printStackTrace();
         }
     }
 
+    private void addCertificate(Certificates certificate) {
+        DatabaseReference newCertificateRef = databaseReference.push();
+        newCertificateRef.setValue(certificate);
+    }
 
-    private void displayCertificatess() {
-        // Display the certificates in the TextView
-        Toast.makeText(this, "" +certificateList.size(), Toast.LENGTH_SHORT).show();
-        StringBuilder result = new StringBuilder();
-        for (Certificates certificate : certificateList) {
-            result.append("Name: ").append(certificate.getName()).append("\n");
-            result.append("Body: ").append(certificate.getBody()).append("\n");
-            result.append("Student ID: ").append(certificate.getStudentId()).append("\n\n");
+    @SuppressLint("Range")
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
         }
-        resultTextView.setText(result.toString());
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
+    }
+
+    private List<String> readCSV(Uri uri) throws IOException {
+        InputStream csvFile = getContentResolver().openInputStream(uri);
+        InputStreamReader isr = new InputStreamReader(csvFile);
+        return readLines(new BufferedReader(isr));
+    }
+
+    private List<String> readLines(BufferedReader reader) throws IOException {
+        try {
+            return IOUtils.readLines(reader);
+        } finally {
+            reader.close();
+        }
+    }
+
+    private void addStudent(Student student) {
+        databaseReference.child(student.getStudentId()).setValue(student);
     }
 }
-

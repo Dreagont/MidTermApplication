@@ -96,15 +96,12 @@ public class MainActivity extends AppCompatActivity {
 
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.UsersTab); // Replace with the ID of your "Users" menu item
-        menuItem.setVisible(false);
+
         databaseReference.child(userName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String role = String.valueOf(snapshot.child("role").getValue());
 
-                if (!role.equals("Employee")) {
-                    menuItem.setVisible(true);
-                }
             }
 
             @Override

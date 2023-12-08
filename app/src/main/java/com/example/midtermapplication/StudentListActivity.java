@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,14 +38,23 @@ public class StudentListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_list);
 
-        SearchView searchBar = findViewById(R.id.student_search_bar);
         ImageView btnAddStudent = findViewById(R.id.btnAddStudent);
         LinearLayout btnBack = findViewById(R.id.btnBackStudentList);
+
+        SearchView searchBar = findViewById(R.id.student_search_bar);
         btnSortByName = findViewById(R.id.btnSortByName);
         btnSortByEmail = findViewById(R.id.btnSortByEmail);
 
         btnSortByEmail.setBackgroundColor(Color.TRANSPARENT);
         btnSortByName.setBackgroundColor(Color.TRANSPARENT);
+
+        String userRole = getIntent().getStringExtra("userRole");
+        Toast.makeText(this, "" + userRole, Toast.LENGTH_SHORT).show();
+
+        if (userRole.equalsIgnoreCase("employee")) {
+            btnAddStudent.setVisibility(View.GONE);
+        }
+
 
         final boolean[] nameAsc = {true};
 
@@ -89,9 +99,6 @@ public class StudentListActivity extends AppCompatActivity {
             }
         });
 
-        String currentUser = getIntent().getStringExtra("username");
-
-
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -113,6 +120,9 @@ public class StudentListActivity extends AppCompatActivity {
         });
 
         searchBar.clearFocus();
+
+        String currentUser = getIntent().getStringExtra("username");
+
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Students");
@@ -138,6 +148,7 @@ public class StudentListActivity extends AppCompatActivity {
                 intent.putExtra("method", "edit");
                 intent.putExtra("student", student);
                 intent.putExtra("username",currentUser);
+                intent.putExtra("userRole",userRole);
                 startActivity(intent);
             }
         });
@@ -147,6 +158,7 @@ public class StudentListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(StudentListActivity.this, AddStudentActivity.class);
                 intent.putExtra("method", "create");
+                intent.putExtra("userRole",userRole);
                 startActivity(intent);
             }
         });
