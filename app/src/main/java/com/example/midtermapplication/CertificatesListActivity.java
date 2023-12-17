@@ -204,14 +204,12 @@ public class CertificatesListActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            // Handle the error
                         }
                     });
                 }
             });
             recyclerView.setAdapter(certificatesAdapter);
         } else {
-            // Handle the case where the user is not logged in
         }
 
     }
@@ -237,7 +235,6 @@ public class CertificatesListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle the error
             }
         });
     }

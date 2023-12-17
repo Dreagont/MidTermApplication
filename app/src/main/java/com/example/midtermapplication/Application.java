@@ -5,7 +5,7 @@ import android.app.NotificationManager;
 import android.os.Build;
 
 public class Application extends android.app.Application {
-    public static final String CHANNEL_ID = "notification_id"; // Corrected the typo
+    public static final String CHANNEL_ID = "notification_id";
 
     @Override
     public void onCreate() {

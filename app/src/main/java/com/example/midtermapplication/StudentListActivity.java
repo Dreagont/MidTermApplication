@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,7 +48,6 @@ public class StudentListActivity extends AppCompatActivity {
         btnSortByName.setBackgroundColor(Color.TRANSPARENT);
 
         String userRole = getIntent().getStringExtra("userRole");
-        Toast.makeText(this, "" + userRole, Toast.LENGTH_SHORT).show();
 
         if (userRole.equalsIgnoreCase("employee")) {
             btnAddStudent.setVisibility(View.GONE);

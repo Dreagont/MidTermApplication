@@ -7,13 +7,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.io.IOUtils;
 
@@ -35,6 +41,8 @@ public class CsvReaderActivity extends AppCompatActivity {
     List<Student> studentList = new ArrayList<>();
     List<Certificates> certificatesList = new ArrayList<>();
 
+    LinearLayout back;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +55,15 @@ public class CsvReaderActivity extends AppCompatActivity {
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("text/*");
             startActivityForResult(intent, READ_REQUEST_CODE);
+        });
+
+        back = findViewById(R.id.btnBack);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
         });
 
     }
@@ -63,7 +80,6 @@ public class CsvReaderActivity extends AppCompatActivity {
                         firebaseDatabase = FirebaseDatabase.getInstance();
                         databaseReference = firebaseDatabase.getReference("Students");
                         int testValue = readCSV(selectedFileUri).get(0).split(",").length;
-                        Toast.makeText(this, "" + testValue, Toast.LENGTH_SHORT).show();
                         for (String student : readCSV(selectedFileUri)) {
                             String id = student.split(",")[0];
                             String name = student.split(",")[1];
@@ -84,7 +100,6 @@ public class CsvReaderActivity extends AppCompatActivity {
                         firebaseDatabase = FirebaseDatabase.getInstance();
                         databaseReference = firebaseDatabase.getReference("Students").child(studentId).child("Certificates");
                         int testValue = readCSV(selectedFileUri).get(0).split(",").length;
-                        Toast.makeText(this, "" + testValue, Toast.LENGTH_SHORT).show();
                         for (String certificateData : readCSV(selectedFileUri)) {
                             String certificateName = certificateData.split(",")[0];
                             String certificateBody = certificateData.split(",")[1];
@@ -146,6 +161,21 @@ public class CsvReaderActivity extends AppCompatActivity {
     }
 
     private void addStudent(Student student) {
-        databaseReference.child(student.getStudentId()).setValue(student);
+        databaseReference.child(student.getStudentId()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                } else {
+                    databaseReference.child(student.getStudentId()).setValue(student);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 }

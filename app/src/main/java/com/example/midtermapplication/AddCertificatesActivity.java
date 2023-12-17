@@ -1,5 +1,7 @@
 package com.example.midtermapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -62,6 +64,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
 
         txtAddCerName.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
         txtAddCerBody.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
+        btnDeleteCertificate.setVisibility(View.GONE);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Students").child(studentId).child(("Certificates"));
@@ -69,7 +72,7 @@ public class AddCertificatesActivity extends AppCompatActivity {
         if (method.equalsIgnoreCase("edit")) {
             txtAddCerBody.setText(certificates.getBody());
             txtAddCerName.setText(certificates.getName());
-
+            btnDeleteCertificate.setVisibility(View.VISIBLE);
             btnAddCer.setText("Update");
         }
 
@@ -96,7 +99,29 @@ public class AddCertificatesActivity extends AppCompatActivity {
         btnDeleteCertificate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddCertificatesActivity.this);
+                builder.setTitle("Delete certificate");
+                builder.setMessage("Do you want to delete this certificate?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DatabaseReference certificateRef = firebaseDatabase.getReference("Students").child(studentId).child("Certificates").child(key);
+                        certificateRef.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(AddCertificatesActivity.this, "Delete certificate successfully", Toast.LENGTH_SHORT).show();
+                                finish();
+                                }
+                        });
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
             }
         });
     }
@@ -138,7 +163,6 @@ public class AddCertificatesActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Write was successful
                         Toast.makeText(AddCertificatesActivity.this, "Certificate added successfully", Toast.LENGTH_SHORT).show();
                         txtAddCerName.setText("");
                         txtAddCerBody.setText("");
@@ -148,7 +172,6 @@ public class AddCertificatesActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(Exception e) {
-                        // Write failed
                         Toast.makeText(AddCertificatesActivity.this, "Failed to add certificate", Toast.LENGTH_SHORT).show();
                     }
                 });

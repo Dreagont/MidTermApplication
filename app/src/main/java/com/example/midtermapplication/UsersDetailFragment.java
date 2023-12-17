@@ -146,7 +146,6 @@ public class UsersDetailFragment extends Fragment {
                     UserSortUtil.sortByRoleDesc(users);
                 }
 
-                // Change background color
                 btnSortByRole.setBackgroundResource(R.drawable.forward_box);
                 btnSortByName.setBackgroundColor(Color.TRANSPARENT);
 
@@ -181,7 +180,6 @@ public class UsersDetailFragment extends Fragment {
             verifyRole(currentUser);
             users = new ArrayList<>();
 
-//            String uniqueKey =(userEmail.split("@"))[0];
 
             retrieveDataAndDisplay();
 
@@ -272,7 +270,6 @@ public class UsersDetailFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Handle the result if needed
         }
     }
 }

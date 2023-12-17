@@ -106,13 +106,15 @@ public class RegisterActivity extends AppCompatActivity {
 
             changeProPicture.setEnabled(false);
             changeProPicture.setClickable(false);
+
+            findViewById(R.id.PasswordField).setVisibility(View.GONE);
         }
 
-        int maxLengthFullName = 50; // Change this to your desired maximum length
-        int maxLengthEmail = 100; // Change this to your desired maximum length
-        int maxLengthPassword = 20; // Change this to your desired maximum length
-        int maxLengthPhone = 15; // Change this to your desired maximum length
-        int maxLengthAge = 3; // Change this to your desired maximum length
+        int maxLengthFullName = 50;
+        int maxLengthEmail = 100;
+        int maxLengthPassword = 20;
+        int maxLengthPhone = 15;
+        int maxLengthAge = 3;
 
         txtFullName.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthFullName)});
         txtEmail.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthEmail)});
@@ -157,7 +159,6 @@ public class RegisterActivity extends AppCompatActivity {
                 gRole.check(R.id.roleStudent);
             }
 
-            // Load existing image in edit mode
             loadProfileImage(editUser.getImageUrl());
             changeProPicture.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -233,7 +234,6 @@ public class RegisterActivity extends AppCompatActivity {
                 } else if (!NoLineBreaksInputFilter.isValidEmail(email)) {
                     Toast.makeText(RegisterActivity.this, "Invalid email format", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Rest of your logic for registration or update
                     if (method.equals("create")) {
                         SignUp(fullName, email, password, phone, age, role);
                         clearText();
@@ -328,7 +328,22 @@ public class RegisterActivity extends AppCompatActivity {
 
         String uniqueKey = (email.split("@"))[0];
 
-        writeNewUser(uniqueKey, user);
+        databaseReference.child(uniqueKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                } else {
+                    writeNewUser(uniqueKey, user);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
     }
 
     private void writeNewUser(String uniqueKey, User user) {
@@ -363,7 +378,6 @@ public class RegisterActivity extends AppCompatActivity {
             UploadTask uploadTask = imageRef.putFile(uri);
 
             uploadTask.addOnSuccessListener(taskSnapshot -> {
-                // Successfully uploaded image, now update the imageUrl in the database
                 updateImageUrl(txtEmail.getText().toString().split("@")[0], imageName);
 
                 Toast.makeText(RegisterActivity.this, "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
@@ -378,7 +392,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void updateImageUrl(String username, String imageName) {
-        // Update the imageUrl field in the database
         databaseReference.child(username).child("imageUrl").setValue(imageName);
     }
 

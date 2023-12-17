@@ -5,6 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CsvReaderActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/forward_box"
+        android:clickable="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/btnBack"
+        >
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/back_arrow"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addStudentPo"
+            android:text="Back"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

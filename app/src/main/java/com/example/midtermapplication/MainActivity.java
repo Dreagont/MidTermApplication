@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
 
-        // Initialize Firebase
         FirebaseApp.initializeApp(this);
 
         username = getIntent().getStringExtra("username").split("@")[0];
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = mainBinding.bottomBar;
 
         Menu menu = bottomNavigationView.getMenu();
-        MenuItem menuItem = menu.findItem(R.id.UsersTab); // Replace with the ID of your "Users" menu item
+        MenuItem menuItem = menu.findItem(R.id.UsersTab);
 
         databaseReference.child(userName).addValueEventListener(new ValueEventListener() {
             @Override
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi từ cơ sở dữ liệu
             }
         });
     }

@@ -74,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                // Hiển thị dialog loading khi bắt đầu xử lý
                 showProgressDialog();
             }
 
@@ -225,7 +224,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle the error, if any
             }
         });
     }

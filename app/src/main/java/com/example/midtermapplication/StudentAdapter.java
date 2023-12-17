@@ -35,7 +35,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.Certific
                     List<Student> filteredList = new ArrayList<>();
 
                     for (Student user : originalUsers) {
-                        if (user.getStudentName().toLowerCase().contains(filterPattern)) {
+                        if (user.getStudentName().toLowerCase().contains(filterPattern) || user.getStudentId().contains(filterPattern)) {
                             filteredList.add(user);
                         }
                     }

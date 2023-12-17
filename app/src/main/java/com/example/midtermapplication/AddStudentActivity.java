@@ -18,8 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +50,6 @@ public class AddStudentActivity extends AppCompatActivity {
         btnSaveStudent = findViewById(R.id.btnSaveStudent);
         addStudentLayout = findViewById(R.id.addStudentLayout);
 
-        // Apply the NoLineBreaksInputFilter to the EditText fields
         txtStudentId.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
         txtStudentName.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
         txtStudentEmail.setFilters(new InputFilter[]{new NoLineBreaksInputFilter()});
@@ -81,8 +83,12 @@ public class AddStudentActivity extends AppCompatActivity {
         }
         username = getIntent().getStringExtra("username");
         editStudent = getIntent().getParcelableExtra("student");
+        btnDeleteStudent.setVisibility(View.GONE);
+        studentCerList.setVisibility(View.GONE);
 
         if (method != null && method.equals("edit")) {
+            studentCerList.setVisibility(View.VISIBLE);
+            btnDeleteStudent.setVisibility(View.VISIBLE);
             studentCerList.setVisibility(View.VISIBLE);
             btnSaveStudent.setText("Update");
 
@@ -143,7 +149,6 @@ public class AddStudentActivity extends AppCompatActivity {
                     Toast.makeText(AddStudentActivity.this, "Invalid email format", Toast.LENGTH_SHORT).show();
                 } else if (method.equals("create")) {
                     addStudent(studentId, studentName, studentMail);
-                    Toast.makeText(AddStudentActivity.this, "Add student success", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     EditStudent(studentId, studentName, studentMail, oldId);
@@ -205,7 +210,22 @@ public class AddStudentActivity extends AppCompatActivity {
     }
 
     private void addStudent(String studentId, String studentName, String studentMail) {
-        databaseReference.child(studentId).setValue(new Student(studentId, studentName, studentMail));
+
+        databaseReference.child(studentId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                } else {
+                    databaseReference.child(studentId).setValue(new Student(studentId, studentName, studentMail));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
 }

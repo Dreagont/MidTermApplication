@@ -188,7 +188,8 @@ public class StudentManageFragment extends Fragment {
     }
 
     private void writeStudentDataToCsv(List<Student> studentList) {
-        String fileName = "studentOut.csv";
+        String fileName = "stuOut.csv";
+
         String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + fileName;
 
         try {
@@ -210,6 +211,7 @@ public class StudentManageFragment extends Fragment {
         }
     }
 
+
     private void loadHeader(String username, UserRoleCallback callback) {
         databaseReference.child(username).addValueEventListener(new ValueEventListener() {
             @Override
@@ -229,7 +231,6 @@ public class StudentManageFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error
             }
         });
     }

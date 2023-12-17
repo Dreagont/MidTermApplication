@@ -67,10 +67,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHo
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
-        // For RecyclerView item click
-        // Implement this in the CertificatesHolder class
 
-        // For AdapterView item click (e.g., ListView, GridView)
         adapterViewListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -123,7 +120,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.CertificatesHo
             txtUserMail = itemView.findViewById(R.id.tvMail);
             txtUserRole = itemView.findViewById(R.id.tvRole);
 
-            // Implement AdapterView item click here
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

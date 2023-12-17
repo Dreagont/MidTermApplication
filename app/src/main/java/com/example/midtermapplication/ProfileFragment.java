@@ -42,7 +42,6 @@ import java.lang.reflect.Method;
 public class ProfileFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String username;
@@ -63,7 +62,6 @@ public class ProfileFragment extends Fragment {
     private String mParam2;
 
     public ProfileFragment() {
-        // Required empty public constructor
     }
 
     /**
@@ -99,7 +97,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         mAuth = FirebaseAuth.getInstance();
         txtUser =view.findViewById(R.id.txtProUserAva);
@@ -211,7 +208,6 @@ public class ProfileFragment extends Fragment {
                 } else if (itemId == R.id.logout) {
                     clearUserSession();
 
-                    // Navigate back to the login screen
                     Intent intent = new Intent(getContext(), LoginActivity.class);
                     startActivity(intent);
 
@@ -229,7 +225,6 @@ public class ProfileFragment extends Fragment {
         editor.clear();
         editor.apply();
     }
-//updateImageUrl(username);
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

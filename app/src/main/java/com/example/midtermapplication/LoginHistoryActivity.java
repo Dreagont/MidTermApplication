@@ -1,7 +1,5 @@
 package com.example.midtermapplication;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -39,7 +37,6 @@ public class LoginHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login_history);
         btnBackStudentList = findViewById(R.id.btnBackStudentList);
         listView = findViewById(R.id.historyList);
-        btnClear = findViewById(R.id.btnClear);
 
         String username = getIntent().getStringExtra("username");
 
@@ -73,27 +70,7 @@ public class LoginHistoryActivity extends AppCompatActivity {
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(LoginHistoryActivity.this);
-                builder.setTitle("Delete user's history");
-                builder.setMessage("Do you want to delete this user's history?");
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteHistory(adapter);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
-            }
-        });
+
     }
 
     private void deleteHistory(ArrayAdapter<String> adapter) {

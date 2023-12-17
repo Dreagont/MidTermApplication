@@ -64,7 +64,7 @@
                     android:background="@drawable/search_box"
                     android:iconifiedByDefault="false"
                     android:queryBackground="@android:color/transparent"
-                    android:queryHint="Enter username" />
+                    android:queryHint="Enter certificate name" />
             </LinearLayout>
 
             <LinearLayout
